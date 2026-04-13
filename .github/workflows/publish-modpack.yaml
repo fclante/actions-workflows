@@ -21,14 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Use checkout to publish the files in your repo
-      - uses: actions/checkout@v6
-
-      - uses: tibdex/github-app-token@v1
+      - uses: actions/checkout@v6   
+      
+      - uses: actions/create-github-app-token@v3
         id: get_installation_token
         with:
-          app_id: ${{ vars.CI_APP_ID }}
-          private_key: ${{ secrets.CI_TOKEN }}
-
+          client-id: ${{ vars.CI_APP_ID }}
+          private-key: ${{ secrets.CI_TOKEN }}
+          owner: ${{ github.repository_owner }}
+     
       - uses: actions/checkout@v6
         with:
           repository: "beeheim/actions-workflows"
@@ -86,7 +87,7 @@ jobs:
           echo "version: ${{ steps.strip_version.outputs.version }}"
           echo "description: ${{ steps.get_modpack_description.outputs.description }}"
 
-      - uses: GreenTF/upload-thunderstore-package@v4.2
+      - uses: GreenTF/upload-thunderstore-package@v4.3
         if: ${{ (github.ref_name == inputs.test-branch-name) && inputs.test-branch-name  || 'main' }}
         with:
           namespace: ${{ inputs.team }} # the thunderstore 'team' to publish under
